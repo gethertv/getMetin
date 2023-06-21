@@ -110,8 +110,8 @@ public class MetinData {
             {
                 if(!isInventoryFull(player))
                     player.getInventory().addItem(item.getItemStack());
-
-                location.getBlock().getWorld().dropItemNaturally(location, item.getItemStack());
+                else
+                    location.getBlock().getWorld().dropItemNaturally(location, item.getItemStack());
             }
         }
         for (CmdDrop cmdData : metin.getFinalRewards().getCommands()) {
@@ -141,8 +141,8 @@ public class MetinData {
             {
                 if(!isInventoryFull(player))
                     player.getInventory().addItem(item.getItemStack());
-
-                location.getBlock().getWorld().dropItemNaturally(location, item.getItemStack());
+                else
+                    location.getBlock().getWorld().dropItemNaturally(location, item.getItemStack());
             }
         }
         for (CmdDrop cmdData : metin.getDropCmds()) {

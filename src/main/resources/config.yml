@@ -1,0 +1,17 @@
+hologram-y: 2
+# moc odrzutu
+push-power: 3.5
+# moc odrzutu w gore
+push-power-y: 1.5
+# odeglosc pobierania graczy
+size-push: 5
+# szansa na push
+push-chance: 4.20
+lang:
+  metin-down: "&cMetin zostal zniszczony z kordow {x} {y} {z}"
+
+broadcast:
+  5: "&eZa 5 sek zrespi sie metin {name} na kordach \n&ax: &f{x} &ay:&f{y} &az: &f{z}"
+
+metin: {}
+

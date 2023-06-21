@@ -1,2 +1,6 @@
-package dev.gether.getmetin.user;public enum RemoveType {
+package dev.gether.getmetin.data;
+
+public enum RemoveType {
+    COMMAND,
+    ITEM
 }

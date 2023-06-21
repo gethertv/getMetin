@@ -8,34 +8,30 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
-public class BreakBlockListener implements Listener {
+public class PlaceBlockListener implements Listener {
 
     private final GetMetin plugin;
 
-    public BreakBlockListener(GetMetin plugin)
+    public PlaceBlockListener(GetMetin plugin)
     {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onBreakBlock(BlockBreakEvent event)
+    public void onBreakBlock(BlockPlaceEvent event)
     {
         Player player = event.getPlayer();
-        Block block = event.getBlock();
+        Block block = event.getBlockPlaced();
         MetinData metinData = GetMetin.getInstance().getMetinData().get(block.getLocation());
         if(metinData==null)
             return;
 
-        if(metinData.getMetin().getMaterial()==block.getType())
+        if(metinData.getMetinLoc().equals(block.getLocation()))
         {
-            if(metinData.getHp()<=0) return;
-
             event.setCancelled(true);
-            event.setDropItems(false);
-            metinData.hitMetin(player);
-            return;
         }
 
     }
