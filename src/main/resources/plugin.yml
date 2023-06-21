@@ -1,0 +1,4 @@
+name: getMetin
+version: '${project.version}'
+main: dev.gether.getmetin.GetMetin
+api-version: 1.16
