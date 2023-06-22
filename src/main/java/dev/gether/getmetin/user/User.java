@@ -152,6 +152,7 @@ public class User {
         {
             ItemStack itemStack = new ItemStack(Material.BEACON);
             ItemMeta itemMeta = itemStack.getItemMeta();
+
             itemMeta.setDisplayName(ColorFixer.addColors("&c&lOstatnia nagroda"));
             itemStack.setItemMeta(itemMeta);
 

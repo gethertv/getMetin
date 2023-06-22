@@ -86,7 +86,7 @@ public class BreakBlockListener implements Listener {
                 Location playerLocation = player.getLocation();
                 Vector vector = playerLocation.getDirection();
                 vector.setX(hitMultiplierX * vectorMultiplier);
-                vector.setY(GetMetin.getInstance().getConfig().getDouble(""));
+                vector.setY(GetMetin.getInstance().getConfig().getDouble("push-power-y"));
                 vector.setZ(hitMultiplierZ * vectorMultiplier);
                 player.setVelocity(vector);
             }

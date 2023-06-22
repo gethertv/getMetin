@@ -7,6 +7,7 @@ import dev.gether.getmetin.file.MetinyFile;
 import dev.gether.getmetin.metin.Metin;
 import dev.gether.getmetin.metin.MetinManager;
 import dev.gether.getmetin.utils.ColorFixer;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -85,6 +86,8 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
                 {
                     if(metinData.getMetin().equals(metin))
                     {
+                        metinData.getHologram().destroy();
+                        metinData.getMetinLoc().getBlock().setType(Material.AIR);
                         MetinyFile.getConfig().set("metin."+metinData.getKey(), null);
                         MetinyFile.save();
                         return true;
@@ -108,6 +111,18 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
                 plugin.getConfig().set("metin."+name+".final-rewards.commands", new HashMap<>());
                 plugin.saveConfig();
                 player.sendMessage(ColorFixer.addColors("&aPomyslnie stworzono metin!"));
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("spawn"))
+            {
+                MetinData metinData = getMetinData(args[1]);
+                if(metinData==null)
+                {
+                    player.sendMessage(ColorFixer.addColors("&cPodany metin nie ma ustawionej lokalizacji!"));
+                    return true;
+                }
+                metinData.createMetin();
+                player.sendMessage(ColorFixer.addColors("&aPomyslnie zrespiono metina!"));
                 return true;
             }
             if(args[0].equalsIgnoreCase("edit"))
@@ -138,7 +153,8 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
                     return false;
                 }
                 int second = Integer.parseInt(args[2]);
-                String uuid = UUID.randomUUID().toString();
+                Location loc = player.getLocation().getBlock().getLocation();
+                String uuid = metin.getKey()+"_"+loc.getBlockX()+"_"+loc.getBlockY()+"_"+loc.getBlockZ();
                 MetinyFile.getConfig().set("metin."+ uuid +".loc", player.getLocation().getBlock().getLocation());
                 MetinyFile.getConfig().set("metin."+ uuid+".key", metin.getKey());
                 MetinyFile.getConfig().set("metin."+ uuid+".second", second);
@@ -148,6 +164,16 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
             }
         }
         return false;
+    }
+
+    public MetinData getMetinData(String metin)
+    {
+        for(MetinData metinData : plugin.getMetinData().values())
+        {
+            if(metinData.getKey().equals(metin))
+                return metinData;
+        }
+        return null;
     }
 
     @Override
@@ -160,10 +186,16 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
                 plugin.getMetinManager().getMetinData().forEach(metin -> name.add(metin.getName()));
                 return name;
             }
+            if(args[0].equalsIgnoreCase("spawn"))
+            {
+                List<String> name = new ArrayList<>();
+                plugin.getMetinData().values().forEach(metinData -> name.add(metinData.getKey()));
+                return name;
+            }
         }
         if(args.length==1)
         {
-            return Arrays.asList("setlocation", "edit", "create", "delete", "removeloc");
+            return Arrays.asList("setlocation", "edit", "create", "delete", "removeloc", "spawn");
         }
         return null;
     }
