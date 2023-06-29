@@ -5,12 +5,16 @@ import dev.gether.getmetin.data.ItemDrop;
 import dev.gether.getmetin.data.MetinData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
@@ -74,22 +78,29 @@ public class BreakBlockListener implements Listener {
             int right = Math.max(first.getBlockX(), second.getBlockX());
 
             Collection<Player> nearbyPlayers = location.getNearbyPlayers(sizePush);
-            for (Player player : nearbyPlayers) {
-                int hitMultiplierX = Math.abs(left - player.getLocation().getX()) > Math.abs(right - player.getLocation().getX()) ? 1 : -1;
-                int hitMultiplierZ = Math.abs(top - player.getLocation().getZ()) > Math.abs(bottom - player.getLocation().getZ()) ? 1 : -1;
+            new BukkitRunnable() {
 
-                double meanX = Math.min(Math.abs(left - player.getLocation().getX()), Math.abs(right - player.getLocation().getX()));
-                double meanZ = Math.min(Math.abs(top - player.getLocation().getZ()), Math.abs(bottom - player.getLocation().getZ()));
-                hitMultiplierZ = meanX < meanZ ? 0 : hitMultiplierZ;
-                hitMultiplierX = meanX < meanZ ? hitMultiplierX : 0;
+                @Override
+                public void run() {
+                    for (Player player : nearbyPlayers) {
 
-                Location playerLocation = player.getLocation();
-                Vector vector = playerLocation.getDirection();
-                vector.setX(hitMultiplierX * vectorMultiplier);
-                vector.setY(GetMetin.getInstance().getConfig().getDouble("push-power-y"));
-                vector.setZ(hitMultiplierZ * vectorMultiplier);
-                player.setVelocity(vector);
-            }
+                        int hitMultiplierX = Math.abs(left - player.getLocation().getX()) > Math.abs(right - player.getLocation().getX()) ? 1 : -1;
+                        int hitMultiplierZ = Math.abs(top - player.getLocation().getZ()) > Math.abs(bottom - player.getLocation().getZ()) ? 1 : -1;
+
+                        double meanX = Math.min(Math.abs(left - player.getLocation().getX()), Math.abs(right - player.getLocation().getX()));
+                        double meanZ = Math.min(Math.abs(top - player.getLocation().getZ()), Math.abs(bottom - player.getLocation().getZ()));
+                        hitMultiplierZ = meanX < meanZ ? 0 : hitMultiplierZ;
+                        hitMultiplierX = meanX < meanZ ? hitMultiplierX : 0;
+
+                        Location playerLocation = player.getLocation();
+                        Vector vector = playerLocation.getDirection();
+                        vector.setX(hitMultiplierX * vectorMultiplier);
+                        vector.setY(GetMetin.getInstance().getConfig().getDouble("push-power-y"));
+                        vector.setZ(hitMultiplierZ * vectorMultiplier);
+                        player.setVelocity(vector);
+                    }
+                }
+            }.runTaskLater(GetMetin.getInstance(), 2L);
         }
     }
 }

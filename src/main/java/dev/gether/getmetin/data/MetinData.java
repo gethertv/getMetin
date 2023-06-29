@@ -5,7 +5,6 @@ import dev.gether.getmetin.metin.Metin;
 import dev.gether.getmetin.utils.ColorFixer;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,11 +66,11 @@ public class MetinData {
         if(hp<=0)
         {
             giveFinalReward(player, metinLoc);
-            Bukkit.broadcast(Component.text(ColorFixer.addColors(GetMetin.getInstance().getConfig().getString("lang.metin-down")
+            Bukkit.broadcastMessage(ColorFixer.addColors(GetMetin.getInstance().getConfig().getString("lang.metin-down")
                     .replace("{x}", String.valueOf(metinLoc.getBlockX()))
                     .replace("{y}", String.valueOf(metinLoc.getBlockY()))
                     .replace("{z}", String.valueOf(metinLoc.getBlockZ()))
-            )));
+            ));
             hologram.destroy();
             metinLoc.getBlock().setType(Material.AIR);
             return;
