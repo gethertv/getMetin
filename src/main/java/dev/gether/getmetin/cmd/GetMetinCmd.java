@@ -1,11 +1,9 @@
 package dev.gether.getmetin.cmd;
 
-import com.google.common.collect.Lists;
 import dev.gether.getmetin.GetMetin;
 import dev.gether.getmetin.data.MetinData;
 import dev.gether.getmetin.file.MetinyFile;
 import dev.gether.getmetin.metin.Metin;
-import dev.gether.getmetin.metin.MetinManager;
 import dev.gether.getmetin.utils.ColorFixer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,8 +13,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -30,7 +26,25 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
         plugin.getCommand(command).setTabCompleter(this);
     }
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(args.length==2)
+        {
+            if(!sender.hasPermission("getmetin.admin"))
+                return false;
+
+            if(args[0].equalsIgnoreCase("spawn"))
+            {
+                MetinData metinData = getMetinData(args[1]);
+                if(metinData==null)
+                {
+                    sender.sendMessage(ColorFixer.addColors("&cPodany metin nie ma ustawionej lokalizacji!"));
+                    return true;
+                }
+                metinData.createMetin();
+                sender.sendMessage(ColorFixer.addColors("&aPomyslnie zrespiono metina!"));
+                return true;
+            }
+        }
         if(!(sender instanceof Player))
             return false;
 
@@ -113,18 +127,6 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
                 player.sendMessage(ColorFixer.addColors("&aPomyslnie stworzono metin!"));
                 return true;
             }
-            if(args[0].equalsIgnoreCase("spawn"))
-            {
-                MetinData metinData = getMetinData(args[1]);
-                if(metinData==null)
-                {
-                    player.sendMessage(ColorFixer.addColors("&cPodany metin nie ma ustawionej lokalizacji!"));
-                    return true;
-                }
-                metinData.createMetin();
-                player.sendMessage(ColorFixer.addColors("&aPomyslnie zrespiono metina!"));
-                return true;
-            }
             if(args[0].equalsIgnoreCase("edit"))
             {
                 Metin metin = plugin.getMetinManager().getMetin(args[1]);
@@ -177,7 +179,7 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if(args.length==2)
         {
             if(args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("setlocation"))

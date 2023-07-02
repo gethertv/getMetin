@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,8 +18,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class BreakBlockListener implements Listener {
 
@@ -77,7 +81,15 @@ public class BreakBlockListener implements Listener {
             int bottom = Math.max(first.getBlockZ(), second.getBlockZ());
             int right = Math.max(first.getBlockX(), second.getBlockX());
 
-            Collection<Player> nearbyPlayers = location.getNearbyPlayers(sizePush);
+            Collection<Player> nearbyPlayers = new ArrayList<>();
+            for(Entity entity : location.getWorld().getNearbyEntities(location, sizePush, sizePush, sizePush))
+            {
+                if(entity instanceof Player)
+                {
+                    nearbyPlayers.add((Player) entity);
+                }
+            }
+
             new BukkitRunnable() {
 
                 @Override
@@ -103,4 +115,5 @@ public class BreakBlockListener implements Listener {
             }.runTaskLater(GetMetin.getInstance(), 2L);
         }
     }
+
 }
