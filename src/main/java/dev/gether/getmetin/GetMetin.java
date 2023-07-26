@@ -45,6 +45,7 @@ public final class GetMetin extends JavaPlugin {
         new PlaceBlockListener(this);
         new InteractClickListener(this);
         new EntityHitListener(this);
+        new ConnectListener(this);
 
         loadMetin();
 
@@ -86,6 +87,12 @@ public final class GetMetin extends JavaPlugin {
             if(metin.getHologram()==null) continue;
             metin.getHologram().destroy();
             metin.getMetinLoc().getBlock().setType(Material.AIR);
+            if(metin.getMetin().getMetinType()== MetinType.CITIZENS)
+            {
+                NPC npc = metin.getNpc();
+                if(npc!=null)
+                    npc.destroy();
+            }
         }
         metinData.clear();
         metinManager = new MetinManager(this);
@@ -99,11 +106,16 @@ public final class GetMetin extends JavaPlugin {
             Location loc =  config.getLocation("metin."+key+".loc");
             int second =  config.getInt("metin."+key+".second");
             String keyMetin = config.getString("metin."+key+".key");
+            double heightY = GetMetin.getInstance().getConfig().getDouble("hologram-y");
+            if(config.isSet("metin."+key+".height-y"))
+                heightY = config.getDouble("metin."+key+".height-y");;
+
             Metin metin = getMetin(keyMetin);
             if(metin==null)
                 continue;
 
-            metinData.put(loc, new MetinData(key, loc, metin, second));
+
+            metinData.put(loc, new MetinData(key, loc, metin, second, heightY));
         }
     }
 

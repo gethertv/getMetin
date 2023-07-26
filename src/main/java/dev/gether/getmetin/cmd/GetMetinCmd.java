@@ -162,6 +162,7 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
                 MetinyFile.getConfig().set("metin."+ uuid +".loc", player.getLocation().getBlock().getLocation());
                 MetinyFile.getConfig().set("metin."+ uuid+".key", metin.getKey());
                 MetinyFile.getConfig().set("metin."+ uuid+".second", second);
+                MetinyFile.getConfig().set("metin."+ uuid+".height-y", 1.0);
                 MetinyFile.save();
                 player.sendMessage(ColorFixer.addColors("&aPomyslnie ustawiono metina!"));
                 return true;

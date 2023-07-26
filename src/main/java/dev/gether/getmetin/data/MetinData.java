@@ -27,13 +27,15 @@ public class MetinData {
     private Long spawnLong;
     private int second;
     private NPC npc;
-    public MetinData(String key, Location metinLoc, Metin metin, int second) {
+    private double heightY;
+    public MetinData(String key, Location metinLoc, Metin metin, int second, double heightY) {
         this.key = key;
         this.metinLoc = metinLoc;
         this.hp = 0;
         this.second = second;
         this.metin = metin;
         spawnLong = System.currentTimeMillis()+(second*1000L);
+        this.heightY = heightY;
     }
 
     public void createMetin() {
@@ -46,7 +48,7 @@ public class MetinData {
             if(metin.getMetinType()==MetinType.CITIZENS)
                 spawnNpc();
 
-            hologram = DHAPI.createHologram(UUID.randomUUID().toString(), metinLoc.clone().add(0.5, GetMetin.getInstance().getConfig().getDouble("hologram-y"), 0.5), getHolo());
+            hologram = DHAPI.createHologram(UUID.randomUUID().toString(), metinLoc.clone().add(0.5, heightY, 0.5), getHolo());
             return;
         } else {
             if(metin.getMetinType()==MetinType.CITIZENS)
