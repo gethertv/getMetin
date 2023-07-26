@@ -3,13 +3,17 @@ package dev.gether.getmetin.metin;
 import dev.gether.getmetin.data.CmdDrop;
 import dev.gether.getmetin.data.FinalRewards;
 import dev.gether.getmetin.data.ItemDrop;
+import dev.gether.getmetin.data.MetinType;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
 public class Metin {
 
+    private MetinType metinType;
+    private EntityType entityType;
     private String key;
     private String name;
 
@@ -20,7 +24,9 @@ public class Metin {
     private List<CmdDrop> dropCmds;
     private FinalRewards finalRewards;
 
-    public Metin(String key, String name, int maxHp, Material material, List<String> hologramLine, List<ItemDrop> dropItems, List<CmdDrop> dropCmds, FinalRewards finalRewards) {
+    public Metin(MetinType metinType, EntityType entityType, String key, String name, int maxHp, Material material, List<String> hologramLine, List<ItemDrop> dropItems, List<CmdDrop> dropCmds, FinalRewards finalRewards) {
+        this.metinType = metinType;
+        this.entityType = entityType;
         this.key = key;
         this.name = name;
         this.maxHp = maxHp;
@@ -29,6 +35,14 @@ public class Metin {
         this.dropItems = dropItems;
         this.dropCmds = dropCmds;
         this.finalRewards = finalRewards;
+    }
+
+    public MetinType getMetinType() {
+        return metinType;
+    }
+
+    public EntityType getEntityType() {
+        return entityType;
     }
 
     public String getName() {

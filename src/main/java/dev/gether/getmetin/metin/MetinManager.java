@@ -4,8 +4,10 @@ import dev.gether.getmetin.GetMetin;
 import dev.gether.getmetin.data.CmdDrop;
 import dev.gether.getmetin.data.FinalRewards;
 import dev.gether.getmetin.data.ItemDrop;
+import dev.gether.getmetin.data.MetinType;
 import dev.gether.getmetin.user.User;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,6 +38,16 @@ public class MetinManager {
         for(String key : plugin.getConfig().getConfigurationSection("metin").getKeys(false))
         {
             String name = plugin.getConfig().getString("metin."+key+".name");
+            MetinType metinType = MetinType.BLOCK;
+            if(plugin.getConfig().isSet("metin."+key+".type"))
+            {
+                metinType = MetinType.valueOf(plugin.getConfig().getString("metin."+key+".type").toUpperCase());
+            }
+            EntityType entityType = EntityType.PLAYER;
+            if(plugin.getConfig().isSet("metin."+key+".entity-type"))
+            {
+                entityType = EntityType.valueOf(plugin.getConfig().getString("metin."+key+".entity-type").toUpperCase());
+            }
             List<String> hologramList = new ArrayList<>();
             Material material = Material.valueOf(plugin.getConfig().getString("metin."+key+".material").toUpperCase());
             hologramList.addAll(plugin.getConfig().getStringList("metin."+key+".hologram"));
@@ -59,7 +71,7 @@ public class MetinManager {
 
             FinalRewards finalRewards = loadFinalRewards(key);
 
-            metinData.add(new Metin(key, name, hp, material ,hologramList, itemDrops, cmdDrop, finalRewards));
+            metinData.add(new Metin(metinType, entityType, key, name, hp, material ,hologramList, itemDrops, cmdDrop, finalRewards));
         }
     }
 

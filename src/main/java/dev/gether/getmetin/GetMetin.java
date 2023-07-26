@@ -2,15 +2,14 @@ package dev.gether.getmetin;
 
 import dev.gether.getmetin.cmd.GetMetinCmd;
 import dev.gether.getmetin.data.MetinData;
+import dev.gether.getmetin.data.MetinType;
 import dev.gether.getmetin.file.MetinyFile;
-import dev.gether.getmetin.listeners.BreakBlockListener;
-import dev.gether.getmetin.listeners.InteractClickListener;
-import dev.gether.getmetin.listeners.InventoryClickListener;
-import dev.gether.getmetin.listeners.PlaceBlockListener;
+import dev.gether.getmetin.listeners.*;
 import dev.gether.getmetin.metin.Metin;
 import dev.gether.getmetin.metin.MetinManager;
 import dev.gether.getmetin.task.SpawnMetinTask;
 import dev.gether.getmetin.utils.ColorFixer;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,6 +44,7 @@ public final class GetMetin extends JavaPlugin {
         new BreakBlockListener(this);
         new PlaceBlockListener(this);
         new InteractClickListener(this);
+        new EntityHitListener(this);
 
         loadMetin();
 
@@ -66,6 +66,12 @@ public final class GetMetin extends JavaPlugin {
             if(metin.getHologram()==null) continue;
             metin.getHologram().destroy();
             metin.getMetinLoc().getBlock().setType(Material.AIR);
+            if(metin.getMetin().getMetinType()== MetinType.CITIZENS)
+            {
+                NPC npc = metin.getNpc();
+                if(npc!=null)
+                    npc.destroy();
+            }
         }
         Bukkit.getScheduler().cancelTasks(this);
         HandlerList.unregisterAll(this);

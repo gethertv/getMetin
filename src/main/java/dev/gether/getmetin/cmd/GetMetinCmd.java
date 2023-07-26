@@ -115,6 +115,8 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
             {
                 String name = args[1];
                 List<String> hologram = Arrays.asList("&7---------------", "&a&lMETIN "+name, "&fHP: &6{actually-hp}&7/&c{max-hp}","&7---------------");
+                plugin.getConfig().set("metin."+name+".type", "BLOCK");
+                plugin.getConfig().set("metin."+name+".entity-type", "PLAYER");
                 plugin.getConfig().set("metin."+name+".hologram", hologram);
                 plugin.getConfig().set("metin."+name+".material", "BEACON");
                 plugin.getConfig().set("metin."+name+".hp", 20);
@@ -197,7 +199,7 @@ public class GetMetinCmd implements CommandExecutor, TabExecutor {
         }
         if(args.length==1)
         {
-            return Arrays.asList("setlocation", "edit", "create", "delete", "removeloc", "spawn");
+            return Arrays.asList("setlocation", "edit", "create", "delete", "removeloc", "spawn", "reload");
         }
         return null;
     }

@@ -3,6 +3,7 @@ package dev.gether.getmetin.listeners;
 import dev.gether.getmetin.GetMetin;
 import dev.gether.getmetin.data.ItemDrop;
 import dev.gether.getmetin.data.MetinData;
+import dev.gether.getmetin.data.MetinType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -41,6 +42,9 @@ public class BreakBlockListener implements Listener {
         Block block = event.getBlock();
         MetinData metinData = GetMetin.getInstance().getMetinData().get(block.getLocation());
         if(metinData==null)
+            return;
+
+        if(metinData.getMetin().getMetinType()!=MetinType.BLOCK)
             return;
 
         if(metinData.getMetin().getMaterial()==block.getType())
