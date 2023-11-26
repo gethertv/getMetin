@@ -23,12 +23,10 @@ import java.util.HashMap;
 public final class GetMetin extends JavaPlugin {
 
     private static GetMetin instance;
-
     private MetinManager metinManager;
     private HashMap<Location, MetinData> metinData = new HashMap<>();
     @Override
     public void onEnable() {
-
         instance = this;
         saveDefaultConfig();
         MetinyFile.loadFile();
@@ -67,7 +65,7 @@ public final class GetMetin extends JavaPlugin {
             if(metin.getHologram()==null) continue;
             metin.getHologram().destroy();
             metin.getMetinLoc().getBlock().setType(Material.AIR);
-            if(metin.getMetin().getMetinType()== MetinType.CITIZENS)
+            if(metin.getMetin().getMetinType() == MetinType.CITIZENS)
             {
                 NPC npc = metin.getNpc();
                 if(npc!=null)
@@ -108,7 +106,7 @@ public final class GetMetin extends JavaPlugin {
             String keyMetin = config.getString("metin."+key+".key");
             double heightY = GetMetin.getInstance().getConfig().getDouble("hologram-y");
             if(config.isSet("metin."+key+".height-y"))
-                heightY = config.getDouble("metin."+key+".height-y");;
+                heightY = config.getDouble("metin."+key+".height-y");
 
             Metin metin = getMetin(keyMetin);
             if(metin==null)

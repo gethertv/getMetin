@@ -17,6 +17,6 @@ public class ConnectListener implements Listener {
     public void onQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
-        EntityHitListener.cooldown.remove(player.getUniqueId());
+        EntityHitListener.getCooldown().remove(player.getUniqueId());
     }
 }

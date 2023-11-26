@@ -27,14 +27,12 @@ public class User {
 
     private double chance = 0;
     private String cmd;
-    private ItemStack itemStack;
     private String chanceString = "&7Szansa: &f{chance}";
 
     private HashMap<Integer, ItemInvData> dataTempRewards = new HashMap<>();
     private HashMap<Integer, ItemInvData> dataTempFinalRewards = new HashMap<>();
 
     private CreateType createType;
-
 
     public User(Player player, Metin metin) {
         this.player = player;
@@ -73,8 +71,8 @@ public class User {
         for (ItemDrop itemDrop : metin.getFinalRewards().getItems()) {
             ItemStack item = itemDrop.getItemStack().clone();
             ItemMeta itemMeta = item.getItemMeta();
-            String disp = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(ColorFixer.addColors((disp != null ? disp : "") + " &7Szansa: " + itemDrop.getChance()));
+            String displayname = getDisplayname(item);
+            itemMeta.setDisplayName(ColorFixer.addColors(displayname + " &7Szansa: " + itemDrop.getChance()));
             List<String> lore = new ArrayList<>();
             if(itemMeta.getLore()!=null)
                 lore.addAll(itemMeta.getLore());
@@ -86,6 +84,11 @@ public class User {
             dataTempFinalRewards.put(i, new ItemInvData(metin.getKey(), itemDrop.getIndex(), RemoveType.ITEM));
             i++;
         }
+    }
+
+    private String getDisplayname(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        return itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : itemStack.getType().name().replace("_", " ");
     }
 
     private void implementRewards() {
@@ -111,8 +114,8 @@ public class User {
         for (ItemDrop itemDrop : metin.getDropItems()) {
             ItemStack item = itemDrop.getItemStack().clone();
             ItemMeta itemMeta = item.getItemMeta();
-            String disp = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(ColorFixer.addColors((disp != null ? disp : "") + " &7Szansa: " + itemDrop.getChance()));
+            String displayname = getDisplayname(item);
+            itemMeta.setDisplayName(ColorFixer.addColors(displayname + " &7Szansa: " + itemDrop.getChance()));
             List<String> lore = new ArrayList<>();
             if(itemMeta.getLore()!=null)
                 lore.addAll(itemMeta.getLore());
@@ -281,32 +284,28 @@ public class User {
 
     public void refreshChance()
     {
-        {
-            String chance = chanceString;
-            ItemStack itemStack = new ItemStack(Material.CLOCK);
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(ColorFixer.addColors(chance.replace("{chance}", String.valueOf(this.chance))));
-            itemStack.setItemMeta(itemMeta);
+        String chance = chanceString;
+        ItemStack itemStack = new ItemStack(Material.CLOCK);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ColorFixer.addColors(chance.replace("{chance}", String.valueOf(this.chance))));
+        itemStack.setItemMeta(itemMeta);
 
-            cmdCreator.setItem(14, itemStack);
-            itemCreator.setItem(14, itemStack);
-        }
+        cmdCreator.setItem(14, itemStack);
+        itemCreator.setItem(14, itemStack);
     }
 
     public void refreshCmd() {
-        {
-            ItemStack itemStack = new ItemStack(Material.PAPER);
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(ColorFixer.addColors("&aKliknij aby ustawic komende"));
-            List<String> command = new ArrayList<>();
-            if(cmd!=null)
-                command.add("&f&o"+cmd);
+        ItemStack itemStack = new ItemStack(Material.PAPER);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ColorFixer.addColors("&aKliknij aby ustawic komende"));
+        List<String> command = new ArrayList<>();
+        if(cmd!=null)
+            command.add("&f&o"+cmd);
 
-            itemMeta.setLore(ColorFixer.addColors(command));
-            itemStack.setItemMeta(itemMeta);
+        itemMeta.setLore(ColorFixer.addColors(command));
+        itemStack.setItemMeta(itemMeta);
 
-            cmdCreator.setItem(12, itemStack);
-        }
+        cmdCreator.setItem(12, itemStack);
     }
     public void setCmd(String cmd) {
         this.cmd = cmd;

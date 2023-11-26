@@ -98,13 +98,12 @@ public class MetinManager {
     public void adminEditMetin(Player player, Metin metin)
     {
         userAdmin.put(player.getUniqueId(), new User(player, metin));
-
     }
 
     public Metin getMetin(String name)
     {
         for (Metin metin : getMetinData()) {
-            if(metin.getName().equalsIgnoreCase(name))
+            if(metin.getKey().equalsIgnoreCase(name))
                 return metin;
         }
         return null;

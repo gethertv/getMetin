@@ -7,17 +7,16 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Trait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
 public class MetinData {
 
+    private boolean enable;
     private String key;
     private Hologram hologram;
     private int hp;
@@ -28,37 +27,41 @@ public class MetinData {
     private int second;
     private NPC npc;
     private double heightY;
+
+    private Random random;
     public MetinData(String key, Location metinLoc, Metin metin, int second, double heightY) {
         this.key = key;
         this.metinLoc = metinLoc;
-        this.hp = 0;
+        this.hp = metin.getMaxHp();
         this.second = second;
         this.metin = metin;
         spawnLong = System.currentTimeMillis()+(second*1000L);
         this.heightY = heightY;
+        random = new Random();
     }
 
     public void createMetin() {
-        if(this.hp<=0) {
-            this.hp = metin.getMaxHp();
-            spawnLong = System.currentTimeMillis() + (second * 1000L);
-            if(metin.getMetinType()==MetinType.BLOCK)
-                metinLoc.getBlock().setType(metin.getMaterial());
 
-            if(metin.getMetinType()==MetinType.CITIZENS)
-                spawnNpc();
-
-            hologram = DHAPI.createHologram(UUID.randomUUID().toString(), metinLoc.clone().add(0.5, heightY, 0.5), getHolo());
-            return;
-        } else {
-            if(metin.getMetinType()==MetinType.CITIZENS)
-            {
-                if (!npc.isSpawned())
-                    spawnNpc();
-            }
+        if(metin.getMetinType()==MetinType.CITIZENS
+                && npc!=null
+                && npc.isSpawned()) {
+            npc.destroy();
         }
+        if(hologram!=null)
+            hologram.destroy();
+
+        enable = true;
         this.hp = metin.getMaxHp();
-        updateHolo();
+
+        spawnLong = System.currentTimeMillis() + (second * 1000L);
+        if(metin.getMetinType()==MetinType.BLOCK)
+            metinLoc.getBlock().setType(metin.getMaterial());
+
+        if(metin.getMetinType()==MetinType.CITIZENS)
+            spawnNpc();
+
+        hologram = DHAPI.createHologram(UUID.randomUUID().toString(), metinLoc.clone().add(0.5, heightY, 0.5), getHolo());
+
         spawnLong = System.currentTimeMillis() + (second * 1000L);
     }
 
@@ -88,21 +91,29 @@ public class MetinData {
     }
     public void hitMetin(Player player)
     {
+        if(!enable)
+            return;
+
         hp--;
         if(hp<=0)
         {
+            enable = false;
             giveFinalReward(player, metinLoc);
             Bukkit.broadcastMessage(ColorFixer.addColors(GetMetin.getInstance().getConfig().getString("lang.metin-down")
                     .replace("{x}", String.valueOf(metinLoc.getBlockX()))
                     .replace("{y}", String.valueOf(metinLoc.getBlockY()))
                     .replace("{z}", String.valueOf(metinLoc.getBlockZ()))
             ));
-            hologram.destroy();
+
+            if(hologram!=null)
+                hologram.destroy();
 
             if(metin.getMetinType()==MetinType.BLOCK)
                 metinLoc.getBlock().setType(Material.AIR);
             if(metin.getMetinType()==MetinType.CITIZENS)
-                npc.destroy();
+                if(npc!=null)
+                    npc.destroy();
+
 
             return;
         }
@@ -132,7 +143,6 @@ public class MetinData {
     }
 
     private void giveFinalReward(Player player, Location location) {
-        Random random = new Random();
         for (ItemDrop item : metin.getFinalRewards().getItems()) {
             double min = 0;
             double max = 100-item.getChance();
@@ -163,7 +173,6 @@ public class MetinData {
     }
 
     private void giveReward(Player player, Location location) {
-        Random random = new Random();
         for (ItemDrop item : metin.getDropItems()) {
             double min = 0;
             double max = 100-item.getChance();

@@ -5,6 +5,7 @@ import dev.gether.getmetin.data.*;
 import dev.gether.getmetin.metin.MetinManager;
 import dev.gether.getmetin.user.User;
 import dev.gether.getmetin.utils.ColorFixer;
+import dev.gether.getmetin.utils.NumberChecker;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class InventoryClickListener implements Listener {
@@ -45,33 +47,31 @@ public class InventoryClickListener implements Listener {
             if(user.getFinalInvCreator().equals(event.getClickedInventory()))
             {
                 ItemInvData itemInvData = user.getFinalReward(event.getSlot());
-                if(itemInvData!=null) {
-                    if (event.getClick() == ClickType.SHIFT_RIGHT) {
-                        if (itemInvData.getRemoveType() == RemoveType.COMMAND) {
-                            plugin.getConfig().set("metin." + itemInvData.getKey() + ".final-rewards.commands." + itemInvData.getIndex(), null);
-                            plugin.getMetinManager().getMetinData().forEach(metin ->
-                            {
-                                if (metin.getKey() == itemInvData.getKey()) {
-                                    metin.getFinalRewards().getCommands().removeIf(cmd -> cmd.getIndex() == itemInvData.getIndex());
-                                }
-                            });
-                        }
-
-                        if (itemInvData.getRemoveType() == RemoveType.ITEM) {
-                            plugin.getConfig().set("metin." + itemInvData.getKey() + ".final-rewards.items." + itemInvData.getIndex(), null);
-                            plugin.getMetinManager().getMetinData().forEach(metin ->
-                            {
-                                if (metin.getKey() == itemInvData.getKey()) {
-                                    metin.getFinalRewards().getItems().removeIf(drop -> drop.getIndex() == itemInvData.getIndex());
-                                }
-                            });
-                        }
-
-                        plugin.saveConfig();
-                        player.sendMessage(ColorFixer.addColors("&aPomyslnie usunieto przedmioty!"));
-                        user.openInventory();
-                        return;
+                if (itemInvData!=null && event.getClick() == ClickType.SHIFT_RIGHT) {
+                    if (itemInvData.getRemoveType() == RemoveType.COMMAND) {
+                        plugin.getConfig().set("metin." + itemInvData.getKey() + ".final-rewards.commands." + itemInvData.getIndex(), null);
+                        plugin.getMetinManager().getMetinData().forEach(metin ->
+                        {
+                            if (metin.getKey().equals(itemInvData.getKey())) {
+                                metin.getFinalRewards().getCommands().removeIf(cmd -> cmd.getIndex().equals(itemInvData.getIndex()));
+                            }
+                        });
                     }
+
+                    if (itemInvData.getRemoveType() == RemoveType.ITEM) {
+                        plugin.getConfig().set("metin." + itemInvData.getKey() + ".final-rewards.items." + itemInvData.getIndex(), null);
+                        plugin.getMetinManager().getMetinData().forEach(metin ->
+                        {
+                            if (metin.getKey().equals(itemInvData.getKey())) {
+                                metin.getFinalRewards().getItems().removeIf(drop -> drop.getIndex().equals(itemInvData.getIndex()));
+                            }
+                        });
+                    }
+
+                    plugin.saveConfig();
+                    player.sendMessage(ColorFixer.addColors("&aPomyslnie usunieto przedmioty!"));
+                    user.openInventory();
+                    return;
                 }
                 if(event.getSlot()==45)
                 {
@@ -159,37 +159,35 @@ public class InventoryClickListener implements Listener {
             if(user.getInventory().equals(event.getClickedInventory()))
             {
                 ItemInvData itemInvData = user.getReward(event.getSlot());
-                if(itemInvData!=null)
+
+                if(itemInvData!=null && event.getClick()== ClickType.SHIFT_RIGHT)
                 {
-                    if(event.getClick()== ClickType.SHIFT_RIGHT)
-                    {
-                        if(itemInvData.getRemoveType()== RemoveType.COMMAND) {
-                            plugin.getConfig().set("metin." + itemInvData.getKey() + ".commands." + itemInvData.getIndex(), null);
-                            plugin.getMetinManager().getMetinData().forEach(metin ->
+                    if(itemInvData.getRemoveType()== RemoveType.COMMAND) {
+                        plugin.getConfig().set("metin." + itemInvData.getKey() + ".commands." + itemInvData.getIndex(), null);
+                        plugin.getMetinManager().getMetinData().forEach(metin ->
+                        {
+                            if(metin.getKey().equals(itemInvData.getKey()))
                             {
-                                if(metin.getKey()==itemInvData.getKey())
-                                {
-                                    metin.getDropCmds().removeIf(cmd -> cmd.getIndex()==itemInvData.getIndex());
-                                }
-                            });
-                        }
-
-                        if(itemInvData.getRemoveType()== RemoveType.ITEM) {
-                            plugin.getConfig().set("metin." + itemInvData.getKey() + ".items." + itemInvData.getIndex(), null);
-                            plugin.getMetinManager().getMetinData().forEach(metin ->
-                            {
-                                if(metin.getKey()==itemInvData.getKey())
-                                {
-                                    metin.getDropItems().removeIf(drop -> drop.getIndex()==itemInvData.getIndex());
-                                }
-                            });
-                        }
-
-                        plugin.saveConfig();
-                        player.sendMessage(ColorFixer.addColors("&aPomyslnie usunieto przedmioty!"));
-                        user.openInventory();
-                        return;
+                                metin.getDropCmds().removeIf(cmd -> cmd.getIndex().equals(itemInvData.getIndex()));
+                            }
+                        });
                     }
+
+                    if(itemInvData.getRemoveType()== RemoveType.ITEM) {
+                        plugin.getConfig().set("metin." + itemInvData.getKey() + ".items." + itemInvData.getIndex(), null);
+                        plugin.getMetinManager().getMetinData().forEach(metin ->
+                        {
+                            if(metin.getKey().equals(itemInvData.getKey()))
+                            {
+                                metin.getDropItems().removeIf(drop -> drop.getIndex().equals(itemInvData.getIndex()));
+                            }
+                        });
+                    }
+
+                    plugin.saveConfig();
+                    player.sendMessage(ColorFixer.addColors("&aPomyslnie usunieto przedmioty!"));
+                    user.openInventory();
+                    return;
                 }
                 if(event.getSlot()== MetinManager.SLOT_ADD_ITEM)
                 {
@@ -214,10 +212,11 @@ public class InventoryClickListener implements Listener {
 
     private void setCmd(User user) {
         new AnvilGUI.Builder()
-                .onComplete((player, text) -> {
+                .onClick((slot, stateSnapshot) -> {
+                    String text = stateSnapshot.getText();
                     user.setCmd(text);
                     user.refreshCmd();
-                    return (AnvilGUI.Response.openInventory(user.getCmdCreator()));
+                    return List.of(AnvilGUI.ResponseAction.openInventory(user.getCmdCreator()));
                 })
                 .text("say {player}")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -228,24 +227,23 @@ public class InventoryClickListener implements Listener {
 
     private void setChanceItem(User user) {
         new AnvilGUI.Builder()
-                .onComplete((player, text) -> {
+                .onClick((slot, stateSnapshot) -> {
+                    String text = stateSnapshot.getText();
+                    Player player = stateSnapshot.getPlayer();
                     double chance = 0;
-                    try {
-                        chance = Double.parseDouble(text);
-
-                    } catch (NumberFormatException e)
-                    {
+                    if(!NumberChecker.isDouble(text)) {
                         player.sendMessage(ColorFixer.addColors("&cPodaj liczbe!"));
-                        return (AnvilGUI.Response.openInventory(user.getItemCreator()));
+                        return List.of(AnvilGUI.ResponseAction.openInventory(user.getItemCreator()));
                     }
+                    chance = Double.parseDouble(text);
                     if(chance<=0)
                     {
                         player.sendMessage(ColorFixer.addColors("&cNie mozesz podac liczby ujemnej!"));
-                        return (AnvilGUI.Response.openInventory(user.getItemCreator()));
+                        return List.of(AnvilGUI.ResponseAction.openInventory(user.getItemCreator()));
                     }
                     user.setChance(chance);
                     user.refreshChance();
-                    return (AnvilGUI.Response.openInventory(user.getItemCreator()));
+                    return List.of(AnvilGUI.ResponseAction.openInventory(user.getItemCreator()));
                 })
                 .text("0.00")
                 .itemLeft(new ItemStack(Material.PAPER))
@@ -255,24 +253,24 @@ public class InventoryClickListener implements Listener {
     }
     private void setChanceCmd(User user) {
         new AnvilGUI.Builder()
-                .onComplete((player, text) -> {
+                .onClick((slot, stateSnapshot) -> {
+                    String text = stateSnapshot.getText();
+                    Player player = stateSnapshot.getPlayer();
                     double chance = 0;
-                    try {
-                        chance = Double.parseDouble(text);
-
-                    } catch (NumberFormatException e)
-                    {
+                    if(!NumberChecker.isDouble(text)) {
                         player.sendMessage(ColorFixer.addColors("&cPodaj liczbe!"));
-                        return (AnvilGUI.Response.openInventory(user.getCmdCreator()));
+                        return List.of(AnvilGUI.ResponseAction.openInventory(user.getCmdCreator()));
                     }
+                    chance = Double.parseDouble(text);
                     if(chance<=0)
                     {
                         player.sendMessage(ColorFixer.addColors("&cNie mozesz podac liczby ujemnej!"));
-                        return (AnvilGUI.Response.openInventory(user.getCmdCreator()));
+                        return List.of(AnvilGUI.ResponseAction.openInventory(user.getCmdCreator()));
+
                     }
                     user.setChance(chance);
                     user.refreshChance();
-                    return (AnvilGUI.Response.openInventory(user.getCmdCreator()));
+                    return List.of(AnvilGUI.ResponseAction.openInventory(user.getCmdCreator()));
                 })
                 .text("0.00")
                 .itemLeft(new ItemStack(Material.PAPER))
