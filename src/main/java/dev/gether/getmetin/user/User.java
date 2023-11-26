@@ -88,7 +88,7 @@ public class User {
 
     private String getDisplayname(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        return itemMeta.hasDisplayName() ? itemMeta.getDisplayName() : itemStack.getType().name().replace("_", " ");
+        return (itemMeta!=null && itemMeta.hasDisplayName()) ? itemMeta.getDisplayName() : itemStack.getType().name().replace("_", " ");
     }
 
     private void implementRewards() {

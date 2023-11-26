@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -143,19 +144,20 @@ public class MetinData {
     }
 
     private void giveFinalReward(Player player, Location location) {
-        for (ItemDrop item : metin.getFinalRewards().getItems()) {
+        for (ItemDrop itemDrop : metin.getFinalRewards().getItems()) {
+            ItemStack itemStack = itemDrop.getItemStack().clone();
             double min = 0;
-            double max = 100-item.getChance();
+            double max = 100-itemDrop.getChance();
             double startWin = min + (max - min) * random.nextDouble();
-            double finishWin = startWin+item.getChance();
+            double finishWin = startWin+itemDrop.getChance();
             double winTicket = random.nextDouble()*100;
 
             if(winTicket >= startWin && winTicket <= finishWin)
             {
                 if(!isInventoryFull(player))
-                    player.getInventory().addItem(item.getItemStack());
+                    player.getInventory().addItem(itemStack);
                 else
-                    location.getBlock().getWorld().dropItemNaturally(location, item.getItemStack());
+                    location.getBlock().getWorld().dropItemNaturally(location, itemStack);
             }
         }
         for (CmdDrop cmdData : metin.getFinalRewards().getCommands()) {
@@ -173,19 +175,20 @@ public class MetinData {
     }
 
     private void giveReward(Player player, Location location) {
-        for (ItemDrop item : metin.getDropItems()) {
+        for (ItemDrop itemDrop : metin.getDropItems()) {
+            ItemStack itemStack = itemDrop.getItemStack().clone();
             double min = 0;
-            double max = 100-item.getChance();
+            double max = 100-itemDrop.getChance();
             double startWin = min + (max - min) * random.nextDouble();
-            double finishWin = startWin+item.getChance();
+            double finishWin = startWin+itemDrop.getChance();
             double winTicket = random.nextDouble()*100;
 
             if(winTicket >= startWin && winTicket <= finishWin)
             {
                 if(!isInventoryFull(player))
-                    player.getInventory().addItem(item.getItemStack());
+                    player.getInventory().addItem(itemStack);
                 else
-                    location.getBlock().getWorld().dropItemNaturally(location, item.getItemStack());
+                    location.getBlock().getWorld().dropItemNaturally(location, itemStack);
             }
         }
         for (CmdDrop cmdData : metin.getDropCmds()) {
